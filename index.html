@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cuadernito Digital</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      margin: 0;
+      background-image: url('https://1.bp.blogspot.com/-DyaV50x6w30/U_-2tBwQohI/AAAAAAAAZto/dfwydpAIDYI/s1600/1393798_613301432069613_1051996224_n.jpg');
+      background-size: 1530px 800.538px;
+      background-repeat: no-repeat;
+      background-position: center top;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h1, h2 {
+      text-align: center;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    button, select, input {
+      margin: 10px 0;
+      padding: 10px;
+      width: 100%;
+      font-size: 16px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .row button {
+      width: 48%;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Cuadernito Digital</h1>
+
+    <div id="main">
+      <h2>Registro de Movimiento</h2>
+      <input type="number" id="monto" placeholder="Monto (Bs)">
+      <select id="tipo">
+        <option value="ingreso">Ingreso</option>
+        <option value="gasto">Gasto</option>
+      </select>
+      <label for="producto">Seleccionar producto vendido:</label>
+      <select id="producto">
+        <optgroup label="Textiles y Confección">
+          <option>Toallas ecológicas</option>
+          <option>Toallas de baño</option>
+          <option>Toallas de mano</option>
+          <option>Tejidos a crochet</option>
+          <option>Fundas de tazas</option>
+          <option>Monederos de crochet</option>
+          <option>Ganchos para cabello tejidos</option>
+          <option>Bolsos y mochilas de tela reutilizable</option>
+          <option>Pijamas de seda</option>
+          <option>Camisetas de algodón personalizadas</option>
+        </optgroup>
+        <optgroup label="Alimentación y Bebidas">
+          <option>Licor de achachairu</option>
+          <option>Dulce de café</option>
+          <option>Escabeche de berenjena</option>
+          <option>Cuñape (pan de queso)</option>
+          <option>Queques (pasteles tradicionales)</option>
+          <option>Empanadas</option>
+          <option>Café molido</option>
+          <option>Café en grano</option>
+          <option>Sultana</option>
+          <option>Jugos naturales de frutas</option>
+        </optgroup>
+        <optgroup label="Cosméticos y Cuidado Personal">
+          <option>Jabones artesanales</option>
+          <option>Bálsamos labiales naturales</option>
+          <option>Fortalecedor de pestañas</option>
+          <option>Crema hidratante natural</option>
+          <option>Aceite esencial de lavanda</option>
+          <option>Exfoliante corporal</option>
+          <option>Perfumes artesanales</option>
+          <option>Velas aromáticas naturales</option>
+          <option>Shampoo sólido</option>
+          <option>Mascarillas faciales naturales</option>
+        </optgroup>
+        <optgroup label="Accesorios y Bijutería">
+          <option>Collares de cuentas</option>
+          <option>Pulseras de hilo</option>
+          <option>Anillos de metal y piedras</option>
+          <option>Aretes de madera y resina</option>
+          <option>Broches para el cabello</option>
+          <option>Cinturones artesanales</option>
+          <option>Accesorios para el cabello</option>
+          <option>Bolsos tejidos</option>
+          <option>Fundas para teléfonos de tela</option>
+          <option>Ganchos de cabello tejidos a mano</option>
+        </optgroup>
+        <optgroup label="Servicios y Consultoría">
+          <option>Asesoría en marketing digital</option>
+          <option>Consultoría empresarial</option>
+          <option>Asesoría legal</option>
+          <option>Capacitación en ventas</option>
+          <option>Talleres de desarrollo personal</option>
+          <option>Consultoría financiera</option>
+          <option>Gestión de redes sociales</option>
+          <option>Cursos de liderazgo</option>
+          <option>Diseño gráfico</option>
+          <option>Branding personal</option>
+        </optgroup>
+        <optgroup label="Productos Personalizados y Artesanías">
+          <option>Tazas personalizadas</option>
+          <option>Camisas sublimadas</option>
+          <option>Mousepads personalizados</option>
+          <option>Cojines personalizados</option>
+          <option>Cuadros personalizados</option>
+          <option>Jarrones personalizados</option>
+          <option>Almohadas decorativas</option>
+          <option>Regalos para empresas</option>
+          <option>Camisetas personalizadas</option>
+          <option>Llaveros personalizados</option>
+        </optgroup>
+      </select>
+      <select id="categoria">
+        <option value="venta">Venta</option>
+        <option value="personal">Personal</option>
+        <option value="proveedor">Proveedor</option> 
+      </select>
+      <input type="date" id="fecha">
+      <button onclick="registrarMovimiento()">Registrar</button>
+
+      <div class="row">
+        <button onclick="mostrarReporte('diario')">Reporte Diario</button>
+        <button onclick="mostrarReporte('semanal')">Reporte Semanal</button>
+      </div>
+      <div class="row">
+        <button onclick="mostrarReporte('mensual')">Reporte Mensual</button>
+        <button onclick="mostrarReporte('anual')">Reporte Anual</button>
+      </div>
+
+      <button onclick="mostrarGestor()">Gestor</button>
+
+      <div id="reporte"></div>
+
+      <div id="gestor" class="hidden">
+        <h2>Gestor de Movimientos</h2>
+        <ul id="lista"></ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let datos = [];
+
+    function registrarMovimiento() {
+      const monto = parseFloat(document.getElementById("monto").value);
+      const tipo = document.getElementById("tipo").value;
+      const categoria = document.getElementById("categoria").value;
+      const producto = document.getElementById("producto").value;
+      const fecha = document.getElementById("fecha").value;
+
+      if (!isNaN(monto) && fecha) {
+        datos.push({ monto, tipo, categoria, producto, fecha });
+        alert("Movimiento registrado");
+        document.getElementById("monto").value = "";
+        document.getElementById("fecha").value = "";
+      } else {
+        alert("Complete todos los campos correctamente");
+      }
+    }
+
+    function mostrarReporte(periodo) {
+      const hoy = new Date();
+      let ingresos = 0, gastos = 0;
+
+      const filtrados = datos.filter(d => {
+        const fecha = new Date(d.fecha);
+        switch (periodo) {
+          case 'diario':
+            return fecha.toDateString() === hoy.toDateString();
+          case 'semanal':
+            const inicio = new Date(hoy);
+            inicio.setDate(hoy.getDate() - hoy.getDay());
+            return fecha >= inicio && fecha <= hoy;
+          case 'mensual':
+            return fecha.getMonth() === hoy.getMonth() && fecha.getFullYear() === hoy.getFullYear();
+          case 'anual':
+            return fecha.getFullYear() === hoy.getFullYear();
+        }
+      });
+
+      filtrados.forEach(d => {
+        if (d.tipo === 'ingreso') ingresos += d.monto;
+        else gastos += d.monto;
+      });
+
+      const saldo = ingresos - gastos;
+      document.getElementById("reporte").innerHTML = `
+        <h3>Reporte ${periodo.charAt(0).toUpperCase() + periodo.slice(1)}</h3>
+        <p><strong>Ingresos:</strong> Bs ${ingresos.toFixed(2)}</p>
+        <p><strong>Gastos:</strong> Bs ${gastos.toFixed(2)}</p>
+        <p><strong>Saldo:</strong> Bs ${saldo.toFixed(2)}</p>
+      `;
+    }
+
+    function mostrarGestor() {
+      const lista = document.getElementById("lista");
+      lista.innerHTML = "";
+      datos.forEach(d => {
+        const li = document.createElement("li");
+        li.innerText = `${d.fecha} - ${d.tipo.toUpperCase()} Bs ${d.monto} (${d.producto}) - ${d.categoria}`;
+        lista.appendChild(li);
+      });
+      document.getElementById("gestor").classList.toggle("hidden");
+    }
+  </script>
+</body>
+</html>
