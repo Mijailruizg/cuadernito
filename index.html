@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -7,14 +7,12 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding: 20px;
       margin: 0;
-      background-image: url('https://1.bp.blogspot.com/-DyaV50x6w30/U_-2tBwQohI/AAAAAAAAZto/dfwydpAIDYI/s1600/1393798_613301432069613_1051996224_n.jpg');
-      background-size: 1530px 800.538px;
+      background-image: url('https://i.pinimg.com/originals/0d/76/e4/0d76e404f8446398414a143f05076084.jpg');
+      background-size: 1530px 900.538px;
       background-repeat: no-repeat;
       background-position: center top;
     }
-
     .container {
       max-width: 600px;
       margin: auto;
@@ -23,34 +21,45 @@
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-
     h1, h2 {
       text-align: center;
     }
-
-    .hidden {
-      display: none;
-    }
-
     button, select, input {
       margin: 10px 0;
       padding: 10px;
       width: 100%;
       font-size: 16px;
     }
-
     .row {
       display: flex;
       justify-content: space-between;
     }
-
     .row button {
       width: 48%;
+    }
+    #pantalla-inicio {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #f5f5f5cc;
+    }
+    #cuadernito {
+      display: none;
+      padding-top: 20px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
+
+  <div id="pantalla-inicio">
+    <div class="container">
+      <h1>Bienvenido a Cuadernito Digital</h1>
+      <button id="btn-inicio">INICIO</button>
+    </div>
+  </div>
+
+  <div id="cuadernito" class="container">
     <h1>Cuadernito Digital</h1>
 
     <div id="main">
@@ -60,86 +69,29 @@
         <option value="ingreso">Ingreso</option>
         <option value="gasto">Gasto</option>
       </select>
+
+      <label for="rubro">Seleccionar rubro:</label>
+      <select id="rubro" onchange="actualizarProductos()">
+        <option value="">-- Selecciona un rubro --</option>
+        <option value="Textiles y Confección">Textiles y Confección</option>
+        <option value="Alimentación y Bebidas">Alimentación y Bebidas</option>
+        <option value="Cosméticos y Cuidado Personal">Cosméticos y Cuidado Personal</option>
+        <option value="Accesorios y Bijutería">Accesorios y Bijutería</option>
+        <option value="Servicios y Consultoría">Servicios y Consultoría</option>
+        <option value="Productos Personalizados y Artesanías">Productos Personalizados y Artesanías</option>
+      </select>
+
       <label for="producto">Seleccionar producto vendido:</label>
       <select id="producto">
-        <optgroup label="Textiles y Confección">
-          <option>Toallas ecológicas</option>
-          <option>Toallas de baño</option>
-          <option>Toallas de mano</option>
-          <option>Tejidos a crochet</option>
-          <option>Fundas de tazas</option>
-          <option>Monederos de crochet</option>
-          <option>Ganchos para cabello tejidos</option>
-          <option>Bolsos y mochilas de tela reutilizable</option>
-          <option>Pijamas de seda</option>
-          <option>Camisetas de algodón personalizadas</option>
-        </optgroup>
-        <optgroup label="Alimentación y Bebidas">
-          <option>Licor de achachairu</option>
-          <option>Dulce de café</option>
-          <option>Escabeche de berenjena</option>
-          <option>Cuñape (pan de queso)</option>
-          <option>Queques (pasteles tradicionales)</option>
-          <option>Empanadas</option>
-          <option>Café molido</option>
-          <option>Café en grano</option>
-          <option>Sultana</option>
-          <option>Jugos naturales de frutas</option>
-        </optgroup>
-        <optgroup label="Cosméticos y Cuidado Personal">
-          <option>Jabones artesanales</option>
-          <option>Bálsamos labiales naturales</option>
-          <option>Fortalecedor de pestañas</option>
-          <option>Crema hidratante natural</option>
-          <option>Aceite esencial de lavanda</option>
-          <option>Exfoliante corporal</option>
-          <option>Perfumes artesanales</option>
-          <option>Velas aromáticas naturales</option>
-          <option>Shampoo sólido</option>
-          <option>Mascarillas faciales naturales</option>
-        </optgroup>
-        <optgroup label="Accesorios y Bijutería">
-          <option>Collares de cuentas</option>
-          <option>Pulseras de hilo</option>
-          <option>Anillos de metal y piedras</option>
-          <option>Aretes de madera y resina</option>
-          <option>Broches para el cabello</option>
-          <option>Cinturones artesanales</option>
-          <option>Accesorios para el cabello</option>
-          <option>Bolsos tejidos</option>
-          <option>Fundas para teléfonos de tela</option>
-          <option>Ganchos de cabello tejidos a mano</option>
-        </optgroup>
-        <optgroup label="Servicios y Consultoría">
-          <option>Asesoría en marketing digital</option>
-          <option>Consultoría empresarial</option>
-          <option>Asesoría legal</option>
-          <option>Capacitación en ventas</option>
-          <option>Talleres de desarrollo personal</option>
-          <option>Consultoría financiera</option>
-          <option>Gestión de redes sociales</option>
-          <option>Cursos de liderazgo</option>
-          <option>Diseño gráfico</option>
-          <option>Branding personal</option>
-        </optgroup>
-        <optgroup label="Productos Personalizados y Artesanías">
-          <option>Tazas personalizadas</option>
-          <option>Camisas sublimadas</option>
-          <option>Mousepads personalizados</option>
-          <option>Cojines personalizados</option>
-          <option>Cuadros personalizados</option>
-          <option>Jarrones personalizados</option>
-          <option>Almohadas decorativas</option>
-          <option>Regalos para empresas</option>
-          <option>Camisetas personalizadas</option>
-          <option>Llaveros personalizados</option>
-        </optgroup>
+        <option value="">-- Selecciona un producto --</option>
       </select>
+
       <select id="categoria">
         <option value="venta">Venta</option>
         <option value="personal">Personal</option>
-        <option value="proveedor">Proveedor</option> 
+        <option value="proveedor">Proveedor</option>
       </select>
+
       <input type="date" id="fecha">
       <button onclick="registrarMovimiento()">Registrar</button>
 
@@ -155,7 +107,6 @@
       <button onclick="mostrarGestor()">Gestor</button>
 
       <div id="reporte"></div>
-
       <div id="gestor" class="hidden">
         <h2>Gestor de Movimientos</h2>
         <ul id="lista"></ul>
@@ -164,67 +115,181 @@
   </div>
 
   <script>
-    let datos = [];
+    let db;
+
+    const productosPorRubro = {
+      "Textiles y Confección": [
+        "Toallas ecológicas", "Toallas de baño", "Toallas de mano", "Tejidos a crochet",
+        "Fundas de tazas", "Monederos de crochet", "Ganchos para cabello tejidos",
+        "Bolsos y mochilas de tela reutilizable", "Pijamas de seda", "Camisetas de algodón personalizadas"
+      ],
+      "Alimentación y Bebidas": [
+        "Licor de achachairu", "Dulce de café", "Escabeche de berenjena", "Cuñape (pan de queso)",
+        "Queques (pasteles tradicionales)", "Empanadas", "Café molido", "Café en grano",
+        "Sultana", "Jugos naturales de frutas"
+      ],
+      "Cosméticos y Cuidado Personal": [
+        "Jabones artesanales", "Bálsamos labiales naturales", "Fortalecedor de pestañas",
+        "Crema hidratante natural", "Aceite esencial de lavanda", "Exfoliante corporal de azúcar y aceite",
+        "Perfumes artesanales", "Velas aromáticas naturales", "Shampoo sólido", "Mascarillas faciales naturales"
+      ],
+      "Accesorios y Bijutería": [
+        "Collares de cuentas", "Pulseras de hilo", "Anillos de metal y piedras",
+        "Aretes de madera y resina", "Broches para el cabello", "Cinturones artesanales",
+        "Accesorios para el cabello", "Bolsos tejidos", "Fundas para teléfonos de tela",
+        "Ganchos de cabello tejidos a mano"
+      ],
+      "Servicios y Consultoría": [
+        "Asesoría en marketing digital", "Consultoría empresarial", "Asesoría legal para pequeñas empresas",
+        "Capacitación en ventas", "Talleres de desarrollo personal", "Consultoría en gestión financiera",
+        "Formación en gestión de redes sociales", "Cursos de liderazgo y emprendimiento",
+        "Servicios de diseño gráfico para empresas", "Asesoría en branding personal"
+      ],
+      "Productos Personalizados y Artesanías": [
+        "Tazas personalizadas", "Camisas sublimadas", "Mousepads personalizados",
+        "Cojines personalizados", "Cuadros personalizados", "Jarrones personalizados",
+        "Almohadas decorativas personalizadas", "Regalos personalizados para empresas",
+        "Camisetas con diseño personalizado", "Llaveros personalizados"
+      ]
+    };
+
+    function actualizarProductos() {
+      const rubro = document.getElementById("rubro").value;
+      const productoSelect = document.getElementById("producto");
+      productoSelect.innerHTML = '<option value="">-- Selecciona un producto --</option>';
+      if (productosPorRubro[rubro]) {
+        productosPorRubro[rubro].forEach(producto => {
+          const option = document.createElement("option");
+          option.value = producto;
+          option.textContent = producto;
+          productoSelect.appendChild(option);
+        });
+      }
+    }
+
+    window.onload = function () {
+      const request = indexedDB.open("CuadernitoDB", 1);
+      const hoy = new Date().toISOString().split("T")[0];
+      document.getElementById("fecha").value = hoy;
+
+      request.onerror = function (event) {
+        console.error("Error al abrir IndexedDB", event);
+      };
+
+      request.onsuccess = function (event) {
+        db = event.target.result;
+        console.log("Base de datos abierta");
+      };
+
+      request.onupgradeneeded = function (event) {
+        db = event.target.result;
+        db.createObjectStore("movimientos", { keyPath: "id", autoIncrement: true });
+        console.log("Base de datos creada");
+      };
+
+      // Manejar botón inicio
+      document.getElementById("btn-inicio").addEventListener("click", () => {
+        document.getElementById("pantalla-inicio").style.display = "none";
+        document.getElementById("cuadernito").style.display = "block";
+      });
+    };
 
     function registrarMovimiento() {
-      const monto = parseFloat(document.getElementById("monto").value);
+      const montoRaw = document.getElementById("monto").value.trim();
+      const monto = parseFloat(montoRaw);
       const tipo = document.getElementById("tipo").value;
       const categoria = document.getElementById("categoria").value;
       const producto = document.getElementById("producto").value;
       const fecha = document.getElementById("fecha").value;
 
-      if (!isNaN(monto) && fecha) {
-        datos.push({ monto, tipo, categoria, producto, fecha });
+      if (montoRaw === "" || isNaN(monto) || !fecha || !producto || !db) {
+        alert("Complete todos los campos correctamente y asegúrese de ingresar un monto válido.");
+        return;
+      }
+
+      const tx = db.transaction(["movimientos"], "readwrite");
+      const store = tx.objectStore("movimientos");
+      store.add({ monto, tipo, categoria, producto, fecha });
+
+      tx.oncomplete = () => {
         alert("Movimiento registrado");
         document.getElementById("monto").value = "";
-        document.getElementById("fecha").value = "";
-      } else {
-        alert("Complete todos los campos correctamente");
-      }
+        document.getElementById("producto").selectedIndex = 0;
+      };
     }
 
     function mostrarReporte(periodo) {
       const hoy = new Date();
+      const hoyStr = hoy.toISOString().split("T")[0];
       let ingresos = 0, gastos = 0;
 
-      const filtrados = datos.filter(d => {
-        const fecha = new Date(d.fecha);
-        switch (periodo) {
-          case 'diario':
-            return fecha.toDateString() === hoy.toDateString();
-          case 'semanal':
-            const inicio = new Date(hoy);
-            inicio.setDate(hoy.getDate() - hoy.getDay());
-            return fecha >= inicio && fecha <= hoy;
-          case 'mensual':
-            return fecha.getMonth() === hoy.getMonth() && fecha.getFullYear() === hoy.getFullYear();
-          case 'anual':
-            return fecha.getFullYear() === hoy.getFullYear();
+      const tx = db.transaction(["movimientos"], "readonly");
+      const store = tx.objectStore("movimientos");
+      const request = store.openCursor();
+
+      request.onsuccess = function (event) {
+        const cursor = event.target.result;
+        if (cursor) {
+          const d = cursor.value;
+          const fecha = new Date(d.fecha);
+          let dentroPeriodo = false;
+
+          switch (periodo) {
+            case 'diario':
+              dentroPeriodo = d.fecha === hoyStr;
+              break;
+            case 'semanal':
+              const inicio = new Date(hoy);
+              inicio.setDate(hoy.getDate() - hoy.getDay());
+              const fin = new Date(inicio);
+              fin.setDate(inicio.getDate() + 6);
+              dentroPeriodo = fecha >= inicio && fecha <= fin;
+              break;
+            case 'mensual':
+              dentroPeriodo = fecha.getMonth() === hoy.getMonth() && fecha.getFullYear() === hoy.getFullYear();
+              break;
+            case 'anual':
+              dentroPeriodo = fecha.getFullYear() === hoy.getFullYear();
+              break;
+          }
+
+          if (dentroPeriodo && !isNaN(d.monto)) {
+            if (d.tipo === 'ingreso') ingresos += d.monto;
+            else gastos += d.monto;
+          }
+
+          cursor.continue();
+        } else {
+          const saldo = ingresos - gastos;
+          document.getElementById("reporte").innerHTML = `
+            <h3>Reporte ${periodo.charAt(0).toUpperCase() + periodo.slice(1)}</h3>
+            <p><strong>Ingresos:</strong> Bs ${ingresos.toFixed(2)}</p>
+            <p><strong>Gastos:</strong> Bs ${gastos.toFixed(2)}</p>
+            <p><strong>Saldo:</strong> Bs ${saldo.toFixed(2)}</p>
+          `;
         }
-      });
-
-      filtrados.forEach(d => {
-        if (d.tipo === 'ingreso') ingresos += d.monto;
-        else gastos += d.monto;
-      });
-
-      const saldo = ingresos - gastos;
-      document.getElementById("reporte").innerHTML = `
-        <h3>Reporte ${periodo.charAt(0).toUpperCase() + periodo.slice(1)}</h3>
-        <p><strong>Ingresos:</strong> Bs ${ingresos.toFixed(2)}</p>
-        <p><strong>Gastos:</strong> Bs ${gastos.toFixed(2)}</p>
-        <p><strong>Saldo:</strong> Bs ${saldo.toFixed(2)}</p>
-      `;
+      };
     }
 
     function mostrarGestor() {
       const lista = document.getElementById("lista");
       lista.innerHTML = "";
-      datos.forEach(d => {
-        const li = document.createElement("li");
-        li.innerText = `${d.fecha} - ${d.tipo.toUpperCase()} Bs ${d.monto} (${d.producto}) - ${d.categoria}`;
-        lista.appendChild(li);
-      });
+
+      const tx = db.transaction(["movimientos"], "readonly");
+      const store = tx.objectStore("movimientos");
+      const request = store.openCursor();
+
+      request.onsuccess = function (event) {
+        const cursor = event.target.result;
+        if (cursor) {
+          const d = cursor.value;
+          const li = document.createElement("li");
+          li.innerText = `${d.fecha} - ${d.tipo.toUpperCase()} Bs ${d.monto} (${d.producto}) - ${d.categoria}`;
+          lista.appendChild(li);
+          cursor.continue();
+        }
+      };
+
       document.getElementById("gestor").classList.toggle("hidden");
     }
   </script>
