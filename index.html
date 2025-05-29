@@ -12,27 +12,53 @@
       background-size: 1530px 900.538px;
       background-repeat: no-repeat;
       background-position: center top;
+      color: #333;
     }
     .container {
       max-width: 600px;
       margin: auto;
       background: white;
-      padding: 20px;
+      padding: 20px 30px;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 0 15px rgba(0,0,0,0.15);
     }
     h1, h2 {
       text-align: center;
+      color: #004d40;
+      margin-bottom: 15px;
     }
     button, select, input {
       margin: 10px 0;
-      padding: 10px;
+      padding: 12px;
       width: 100%;
       font-size: 16px;
+      border: 2px solid #004d40;
+      border-radius: 6px;
+      box-sizing: border-box;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      cursor: pointer;
+    }
+    button {
+      font-weight: bold;
+      background-color: #00796b;
+      color: white;
+      border-color: #00796b;
+    }
+    button:hover {
+      background-color: #004d40;
+      border-color: #004d40;
+    }
+    select, input[type="number"], input[type="date"] {
+      border: 2px solid #80cbc4;
+      color: #004d40;
+    }
+    select:hover, input[type="number"]:hover, input[type="date"]:hover {
+      border-color: #004d40;
     }
     .row {
       display: flex;
       justify-content: space-between;
+      gap: 10px;
     }
     .row button {
       width: 48%;
@@ -47,6 +73,35 @@
     #cuadernito {
       display: none;
       padding-top: 20px;
+    }
+    .hidden {
+      display: none;
+    }
+    #reporte {
+      margin-top: 20px;
+      background-color: #e0f2f1;
+      border: 1px solid #004d40;
+      border-radius: 6px;
+      padding: 15px;
+      color: #004d40;
+    }
+    #gestor {
+      margin-top: 20px;
+      background-color: #fff3e0;
+      border: 1px solid #ffb300;
+      border-radius: 6px;
+      padding: 15px;
+      color: #ff6f00;
+    }
+    #gestor ul {
+      list-style-type: none;
+      padding-left: 0;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    #gestor ul li {
+      padding: 6px 10px;
+      border-bottom: 1px solid #ffd54f;
     }
   </style>
 </head>
@@ -105,6 +160,7 @@
       </div>
 
       <button onclick="mostrarGestor()">Gestor</button>
+      <button onclick="location.href='manual.html'">Manual</button>
 
       <div id="reporte"></div>
       <div id="gestor" class="hidden">
@@ -118,39 +174,12 @@
     let db;
 
     const productosPorRubro = {
-      "Textiles y Confección": [
-        "Toallas ecológicas", "Toallas de baño", "Toallas de mano", "Tejidos a crochet",
-        "Fundas de tazas", "Monederos de crochet", "Ganchos para cabello tejidos",
-        "Bolsos y mochilas de tela reutilizable", "Pijamas de seda", "Camisetas de algodón personalizadas"
-      ],
-      "Alimentación y Bebidas": [
-        "Licor de achachairu", "Dulce de café", "Escabeche de berenjena", "Cuñape (pan de queso)",
-        "Queques (pasteles tradicionales)", "Empanadas", "Café molido", "Café en grano",
-        "Sultana", "Jugos naturales de frutas"
-      ],
-      "Cosméticos y Cuidado Personal": [
-        "Jabones artesanales", "Bálsamos labiales naturales", "Fortalecedor de pestañas",
-        "Crema hidratante natural", "Aceite esencial de lavanda", "Exfoliante corporal de azúcar y aceite",
-        "Perfumes artesanales", "Velas aromáticas naturales", "Shampoo sólido", "Mascarillas faciales naturales"
-      ],
-      "Accesorios y Bijutería": [
-        "Collares de cuentas", "Pulseras de hilo", "Anillos de metal y piedras",
-        "Aretes de madera y resina", "Broches para el cabello", "Cinturones artesanales",
-        "Accesorios para el cabello", "Bolsos tejidos", "Fundas para teléfonos de tela",
-        "Ganchos de cabello tejidos a mano"
-      ],
-      "Servicios y Consultoría": [
-        "Asesoría en marketing digital", "Consultoría empresarial", "Asesoría legal para pequeñas empresas",
-        "Capacitación en ventas", "Talleres de desarrollo personal", "Consultoría en gestión financiera",
-        "Formación en gestión de redes sociales", "Cursos de liderazgo y emprendimiento",
-        "Servicios de diseño gráfico para empresas", "Asesoría en branding personal"
-      ],
-      "Productos Personalizados y Artesanías": [
-        "Tazas personalizadas", "Camisas sublimadas", "Mousepads personalizados",
-        "Cojines personalizados", "Cuadros personalizados", "Jarrones personalizados",
-        "Almohadas decorativas personalizadas", "Regalos personalizados para empresas",
-        "Camisetas con diseño personalizado", "Llaveros personalizados"
-      ]
+      "Textiles y Confección": ["Toallas ecológicas", "Toallas de baño", "Toallas de mano", "Tejidos a crochet", "Fundas de tazas", "Monederos de crochet", "Ganchos para cabello tejidos", "Bolsos y mochilas de tela reutilizable", "Pijamas de seda", "Camisetas de algodón personalizadas"],
+      "Alimentación y Bebidas": ["Licor de achachairu", "Dulce de café", "Escabeche de berenjena", "Cuñape (pan de queso)", "Queques (pasteles tradicionales)", "Empanadas", "Café molido", "Café en grano", "Sultana", "Jugos naturales de frutas"],
+      "Cosméticos y Cuidado Personal": ["Jabones artesanales", "Bálsamos labiales naturales", "Fortalecedor de pestañas", "Crema hidratante natural", "Aceite esencial de lavanda", "Exfoliante corporal de azúcar y aceite", "Perfumes artesanales", "Velas aromáticas naturales", "Shampoo sólido", "Mascarillas faciales naturales"],
+      "Accesorios y Bijutería": ["Collares de cuentas", "Pulseras de hilo", "Anillos de metal y piedras", "Aretes de madera y resina", "Broches para el cabello", "Cinturones artesanales", "Accesorios para el cabello", "Bolsos tejidos", "Fundas para teléfonos de tela", "Ganchos de cabello tejidos a mano"],
+      "Servicios y Consultoría": ["Asesoría en marketing digital", "Consultoría empresarial", "Asesoría legal para pequeñas empresas", "Capacitación en ventas", "Talleres de desarrollo personal", "Consultoría en gestión financiera", "Formación en gestión de redes sociales", "Cursos de liderazgo y emprendimiento", "Servicios de diseño gráfico para empresas", "Asesoría en branding personal"],
+      "Productos Personalizados y Artesanías": ["Tazas personalizadas", "Camisas sublimadas", "Mousepads personalizados", "Cojines personalizados", "Cuadros personalizados", "Jarrones personalizados", "Almohadas decorativas personalizadas", "Regalos personalizados para empresas", "Camisetas con diseño personalizado", "Llaveros personalizados"]
     };
 
     function actualizarProductos() {
@@ -187,7 +216,6 @@
         console.log("Base de datos creada");
       };
 
-      // Manejar botón inicio
       document.getElementById("btn-inicio").addEventListener("click", () => {
         document.getElementById("pantalla-inicio").style.display = "none";
         document.getElementById("cuadernito").style.display = "block";
@@ -238,13 +266,14 @@
             case 'diario':
               dentroPeriodo = d.fecha === hoyStr;
               break;
-            case 'semanal':
+            case 'semanal': {
               const inicio = new Date(hoy);
               inicio.setDate(hoy.getDate() - hoy.getDay());
               const fin = new Date(inicio);
               fin.setDate(inicio.getDate() + 6);
               dentroPeriodo = fecha >= inicio && fecha <= fin;
               break;
+            }
             case 'mensual':
               dentroPeriodo = fecha.getMonth() === hoy.getMonth() && fecha.getFullYear() === hoy.getFullYear();
               break;
@@ -293,5 +322,6 @@
       document.getElementById("gestor").classList.toggle("hidden");
     }
   </script>
+
 </body>
 </html>
