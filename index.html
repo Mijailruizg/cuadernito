@@ -143,6 +143,62 @@
     .manual-selector select option {
       padding: 8px;
     }
+
+  /* Botón flotante para gestión de rubros */
+  .floating-rubro-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #00796b;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Menú desplegable */
+  .rubro-menu {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    z-index: 1000;
+    display: none;
+  }
+
+  .rubro-menu input {
+    margin: 5px 0;
+    padding: 8px;
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+  }
+
+  .rubro-menu button {
+    margin: 5px 0;
+    padding: 8px;
+    width: 100%;
+    background-color: #00796b;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+
+
+
 </style>
 <!-- Cambia la forma de cargar las bibliotecas -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -155,8 +211,30 @@
 </script>
 </head>
 <body>
+<!-- Botón flotante para gestión de rubros -->
+<button class="floating-rubro-btn" onclick="toggleRubroMenu()">≡</button>
 
-  <!-- Marca de agua arriba izquierda -->
+<!-- Menú de gestión de rubros -->
+<div class="rubro-menu" id="rubroMenu">
+  <h3>Gestión de Rubros</h3>
+  <input type="text" id="nuevoRubro" placeholder="Nuevo rubro">
+  <button onclick="agregarRubro()">Añadir Rubro</button>
+  
+  <select id="rubroAEliminar">
+    <option value="">Selecciona rubro a eliminar</option>
+  </select>
+  <button onclick="eliminarRubro()">Eliminar Rubro</button>
+  
+  <select id="rubroProducto">
+    <option value="">Selecciona rubro para producto</option>
+  </select>
+  <input type="text" id="nuevoProducto" placeholder="Nuevo producto">
+  <button onclick="agregarProducto()">Añadir Producto</button>
+</div>
+
+
+  
+  <!-- Marca de agua  -->
   <div class="marca-agua">CPU-SIS Sta.Cruz</div>
 
   <div id="pantalla-inicio">
@@ -166,18 +244,28 @@
     </div>
   </div>
 
-  <div id="cuadernito" class="container">
-    <h1>Cuadernito Digital</h1>
+<div id="cuadernito" class="container">
+  <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px;">
+   <img src="https://unifranz.edu.bo/wp-content/themes/unifranz/dist/images/logo_583717f4.png" alt="Logo" style="height: 58px; width: 58px; object-fit: contain; border-radius: 8px;">
+    <h1 style="margin: 0;">Cuadernito Digital</h1>
+  </div>
 
-    <label for="tipo">tipo:</label>
+    
+    <label for="tipo"></label>
     <select id="tipo">
       <option value="">-- Selecciona --</option>
       <option value="ingreso">Ingreso</option>
       <option value="gasto">Gasto</option>
     </select>
 
-    <label for="monto">Monto (Bs):</label>
-    <input type="number" id="monto" placeholder="Monto (Bs)">
+    <label for="tipo">Seleccionar</label>
+    <select id="categoria">
+      <option value="">-- Selecciona --</option>
+      <option value="venta">Venta</option>
+      <option value="personal">Gastos Personal</option>
+      <option value="proveedor">Gastos Proveedor</option>
+      <option value="otros">Gastos Del Negocio</option>
+    </select>
 
     <label for="rubro">Seleccionar rubro:</label>
     <select id="rubro" onchange="actualizarProductos()">
@@ -195,14 +283,11 @@
       <option value="">-- Selecciona --</option>
     </select>
 
-    <label for="tipo">tipo:</label>
-    <select id="categoria">
-      <option value="">-- Selecciona --</option>
-      <option value="venta">Venta</option>
-      <option value="personal">Personal</option>
-      <option value="proveedor">Proveedor</option>
-      <option value="otros">Otros</option>
-    </select>
+
+    <label for="monto">Monto (Bs):</label>
+    <input type="number" id="monto" placeholder="Monto (Bs)">
+
+
 
     <input type="date" id="fecha">
     <button onclick="registrarMovimiento()">Registrar</button>
@@ -516,6 +601,115 @@ async function exportarGestorAPdf() {
     alert('Ocurrió un error al generar el PDF: ' + error.message);
   }
 }
+
+
+
+// Función para mostrar/ocultar el menú de rubros
+function toggleRubroMenu() {
+  const menu = document.getElementById('rubroMenu');
+  menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+  
+  // Actualizar los selectores cuando se abre el menú
+  if (menu.style.display === 'block') {
+    actualizarSelectoresRubros();
+  }
+}
+
+// Actualizar los selectores de rubros
+function actualizarSelectoresRubros() {
+  const rubroSelect = document.getElementById('rubro');
+  const rubroAEliminar = document.getElementById('rubroAEliminar');
+  const rubroProducto = document.getElementById('rubroProducto');
+  
+  // Limpiar selectores
+  rubroAEliminar.innerHTML = '<option value="">Selecciona rubro a eliminar</option>';
+  rubroProducto.innerHTML = '<option value="">Selecciona rubro para producto</option>';
+  
+  // Llenar con los rubros existentes
+  for (const rubro in productosPorRubro) {
+    const option1 = document.createElement('option');
+    option1.value = rubro;
+    option1.textContent = rubro;
+    rubroAEliminar.appendChild(option1.cloneNode(true));
+    
+    const option2 = document.createElement('option');
+    option2.value = rubro;
+    option2.textContent = rubro;
+    rubroProducto.appendChild(option2);
+  }
+}
+
+// Añadir nuevo rubro
+function agregarRubro() {
+  const nuevoRubro = document.getElementById('nuevoRubro').value.trim();
+  if (nuevoRubro && !productosPorRubro[nuevoRubro]) {
+    productosPorRubro[nuevoRubro] = [];
+    
+    // Actualizar el selector principal
+    const rubroSelect = document.getElementById('rubro');
+    const option = document.createElement('option');
+    option.value = nuevoRubro;
+    option.textContent = nuevoRubro;
+    rubroSelect.appendChild(option);
+    
+    // Limpiar campo
+    document.getElementById('nuevoRubro').value = '';
+    
+    // Actualizar selectores en el menú
+    actualizarSelectoresRubros();
+    alert('Rubro añadido con éxito');
+  } else {
+    alert('El rubro ya existe o el nombre está vacío');
+  }
+}
+
+// Eliminar rubro
+function eliminarRubro() {
+  const rubroAEliminar = document.getElementById('rubroAEliminar').value;
+  if (rubroAEliminar && confirm(`¿Estás seguro de eliminar el rubro "${rubroAEliminar}"?`)) {
+    delete productosPorRubro[rubroAEliminar];
+    
+    // Actualizar el selector principal
+    const rubroSelect = document.getElementById('rubro');
+    for (let i = 0; i < rubroSelect.options.length; i++) {
+      if (rubroSelect.options[i].value === rubroAEliminar) {
+        rubroSelect.remove(i);
+        break;
+      }
+    }
+    
+    // Actualizar selectores en el menú
+    actualizarSelectoresRubros();
+    alert('Rubro eliminado con éxito');
+  }
+}
+
+// Añadir nuevo producto a un rubro
+function agregarProducto() {
+  const rubro = document.getElementById('rubroProducto').value;
+  const nuevoProducto = document.getElementById('nuevoProducto').value.trim();
+  
+  if (rubro && nuevoProducto) {
+    if (!productosPorRubro[rubro].includes(nuevoProducto)) {
+      productosPorRubro[rubro].push(nuevoProducto);
+      
+      // Si el rubro seleccionado en el formulario principal es el mismo, actualizar productos
+      if (document.getElementById('rubro').value === rubro) {
+        actualizarProductos();
+      }
+      
+      // Limpiar campos
+      document.getElementById('nuevoProducto').value = '';
+      alert('Producto añadido con éxito');
+    } else {
+      alert('Este producto ya existe en el rubro seleccionado');
+    }
+  } else {
+    alert('Selecciona un rubro y escribe un nombre de producto');
+  }
+}
+
+
   </script>
 
 </body>
