@@ -101,10 +101,10 @@
     }
     #gestor ul li {
       padding: 6px 10px;
-      border-bottom: 1px solid #ffd54f;
+      border-bottom: 1px solid #9f8325;
     }
 
-      /* Marca de agua */
+    /* Marca de agua principal */
     .marca-agua {
       position: fixed;
       top: 10px;
@@ -119,12 +119,52 @@
       text-transform: uppercase;
       letter-spacing: 2px;
     }
+
+    /* Marca de agua secundaria */
+    .watermark {
+      position: fixed;
+      top: 35px; /* Ajuste para colocarla debajo */
+      left: 10px;
+      font-size: 14px;
+      font-weight: normal;
+      color: rgba(0, 77, 64, 0.15);
+      user-select: none;
+      pointer-events: none;
+      z-index: 9999;
+      font-family: Arial, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Estilo para el menú de manuales */
+    .manual-selector {
+      margin-top: 20px;
+      border-top: 1px solid #e0e0e0;
+      padding-top: 20px;
+    }
+    
+    .manual-selector label {
+      display: block;
+      margin-bottom: 8px;
+      color: #004d40;
+      font-weight: bold;
+    }
+    
+    .manual-selector select {
+      background-color: #e8f5e9;
+      font-weight: bold;
+    }
+    
+    .manual-selector select option {
+      padding: 8px;
+    }
   </style>
 </head>
 <body>
 
   <!-- Marca de agua arriba izquierda -->
-  <div class="marca-agua">Ingeniería en sistema</div>
+  <div class="marca-agua">Ingeniería en Sistemas</div>
+  <div class="watermark">Contaduria Publica</div>
 
   <div id="pantalla-inicio">
     <div class="container">
@@ -136,61 +176,68 @@
   <div id="cuadernito" class="container">
     <h1>Cuadernito Digital</h1>
 
-<label for="tipo">tipo:</label>
-<select id="tipo">
-   <option value="">-- Selecciona --</option>
-  <option value="ingreso">Ingreso</option>
-  <option value="gasto">Gasto</option>
-</select>
+    <label for="tipo">tipo:</label>
+    <select id="tipo">
+      <option value="">-- Selecciona --</option>
+      <option value="ingreso">Ingreso</option>
+      <option value="gasto">Gasto</option>
+    </select>
 
-<label for="monto">Monto (Bs):</label>
-<input type="number" id="monto" placeholder="Monto (Bs)">
+    <label for="monto">Monto (Bs):</label>
+    <input type="number" id="monto" placeholder="Monto (Bs)">
 
-      <label for="rubro">Seleccionar rubro:</label>
-      <select id="rubro" onchange="actualizarProductos()">
-        <option value="">-- Selecciona un rubro --</option>
-        <option value="Textiles y Confección">Textiles y Confección</option>
-        <option value="Alimentación y Bebidas">Alimentación y Bebidas</option>
-        <option value="Cosméticos y Cuidado Personal">Cosméticos y Cuidado Personal</option>
-        <option value="Accesorios y Bijutería">Accesorios y Bijutería</option>
-        <option value="Servicios y Consultoría">Servicios y Consultoría</option>
-        <option value="Productos Personalizados y Artesanías">Productos Personalizados y Artesanías</option>
-      </select>
+    <label for="rubro">Seleccionar rubro:</label>
+    <select id="rubro" onchange="actualizarProductos()">
+      <option value="">-- Selecciona un rubro --</option>
+      <option value="Textiles y Confección">Textiles y Confección</option>
+      <option value="Alimentación y Bebidas">Alimentación y Bebidas</option>
+      <option value="Cosméticos y Cuidado Personal">Cosméticos y Cuidado Personal</option>
+      <option value="Accesorios y Bijutería">Accesorios y Bijutería</option>
+      <option value="Servicios y Consultoría">Servicios y Consultoría</option>
+      <option value="Productos Personalizados y Artesanías">Productos Personalizados y Artesanías</option>
+    </select>
 
-      <label for="producto">Seleccionar producto :</label>
-      <select id="producto">
-        <option value="">-- Selecciona --</option>
-      </select>
-
+    <label for="producto">Seleccionar producto:</label>
+    <select id="producto">
+      <option value="">-- Selecciona --</option>
+    </select>
 
     <label for="tipo">tipo:</label>
-      <select id="categoria">
-        <option value="">-- Selecciona --</option>
-        <option value="venta">Venta</option>
-        <option value="personal">Personal</option>
-        <option value="proveedor">Proveedor</option>
+    <select id="categoria">
+      <option value="">-- Selecciona --</option>
+      <option value="venta">Venta</option>
+      <option value="personal">Personal</option>
+      <option value="proveedor">Proveedor</option>
+      <option value="otros">Otros</option>
+    </select>
+
+    <input type="date" id="fecha">
+    <button onclick="registrarMovimiento()">Registrar</button>
+
+    <div class="row">
+      <button onclick="mostrarReporte('diario')">Reporte Diario</button>
+      <button onclick="mostrarReporte('semanal')">Reporte Semanal</button>
+    </div>
+    <div class="row">
+      <button onclick="mostrarReporte('mensual')">Reporte Mensual</button>
+      <button onclick="mostrarReporte('anual')">Reporte Anual</button>
+    </div>
+
+    <button onclick="mostrarGestor()">Gestor</button>
+
+    <div class="manual-selector">
+      <label for="manuales">Seleccionar Manual:</label>
+      <select id="manuales" onchange="abrirManual()">
+        <option value="">-- Elige un manual --</option>
+        <option value="manual_uso_app.html">Manual de uso App</option>
+        <option value="manual_contable.html">Manual Contable</option>
       </select>
+    </div>
 
-      <input type="date" id="fecha">
-      <button onclick="registrarMovimiento()">Registrar</button>
-
-      <div class="row">
-        <button onclick="mostrarReporte('diario')">Reporte Diario</button>
-        <button onclick="mostrarReporte('semanal')">Reporte Semanal</button>
-      </div>
-      <div class="row">
-        <button onclick="mostrarReporte('mensual')">Reporte Mensual</button>
-        <button onclick="mostrarReporte('anual')">Reporte Anual</button>
-      </div>
-
-      <button onclick="mostrarGestor()">Gestor</button>
-      <button onclick="location.href='manual.html'">Manual</button>
-
-      <div id="reporte"></div>
-      <div id="gestor" class="hidden">
-        <h2>Gestor de Movimientos</h2>
-        <ul id="lista"></ul>
-      </div>
+    <div id="reporte"></div>
+    <div id="gestor" class="hidden">
+      <h2>Gestor de Movimientos</h2>
+      <ul id="lista"></ul>
     </div>
   </div>
 
@@ -217,6 +264,15 @@
           option.textContent = producto;
           productoSelect.appendChild(option);
         });
+      }
+    }
+    
+    function abrirManual() {
+      const manualSeleccionado = document.getElementById("manuales").value;
+      if (manualSeleccionado) {
+        window.open(manualSeleccionado, '_blank');
+        // Resetear la selección después de abrir
+        document.getElementById("manuales").selectedIndex = 0;
       }
     }
 
@@ -270,73 +326,70 @@
       };
     }
 
-  function mostrarReporte(periodo) {
-  const hoy = new Date();
-  hoy.setHours(0, 0, 0, 0);
-  const hoyStr = hoy.toISOString().split("T")[0];
-  let ingresos = 0, gastos = 0;
+    function mostrarReporte(periodo) {
+      const hoy = new Date();
+      hoy.setHours(0, 0, 0, 0);
+      const hoyStr = hoy.toISOString().split("T")[0];
+      let ingresos = 0, gastos = 0;
 
-  const tx = db.transaction(["movimientos"], "readonly");
-  const store = tx.objectStore("movimientos");
-  const request = store.openCursor();
+      const tx = db.transaction(["movimientos"], "readonly");
+      const store = tx.objectStore("movimientos");
+      const request = store.openCursor();
 
-  request.onsuccess = function (event) {
-    const cursor = event.target.result;
-    if (cursor) {
-      const d = cursor.value;
-      const [anio, mes, dia] = d.fecha.split("-").map(Number);
-      const fecha = new Date(anio, mes - 1, dia);
-      fecha.setHours(0, 0, 0, 0);
+      request.onsuccess = function (event) {
+        const cursor = event.target.result;
+        if (cursor) {
+          const d = cursor.value;
+          const [anio, mes, dia] = d.fecha.split("-").map(Number);
+          const fecha = new Date(anio, mes - 1, dia);
+          fecha.setHours(0, 0, 0, 0);
 
-      let dentroPeriodo = false;
+          let dentroPeriodo = false;
 
-      switch (periodo) {
-        case 'diario':
-          dentroPeriodo = d.fecha === hoyStr;
-          break;
+          switch (periodo) {
+            case 'diario':
+              dentroPeriodo = d.fecha === hoyStr;
+              break;
 
-        case 'semanal': {
-          const inicioSemana = new Date(hoy);
-          inicioSemana.setDate(hoy.getDate() - hoy.getDay()); // domingo
-          const finSemana = new Date(inicioSemana);
-          finSemana.setDate(inicioSemana.getDate() + 6);
-          dentroPeriodo = fecha >= inicioSemana && fecha <= finSemana;
-          break;
+            case 'semanal': {
+              const inicioSemana = new Date(hoy);
+              inicioSemana.setDate(hoy.getDate() - hoy.getDay()); // domingo
+              const finSemana = new Date(inicioSemana);
+              finSemana.setDate(inicioSemana.getDate() + 6);
+              dentroPeriodo = fecha >= inicioSemana && fecha <= finSemana;
+              break;
+            }
+
+            case 'mensual':
+              dentroPeriodo = fecha.getMonth() === hoy.getMonth() &&
+                              fecha.getFullYear() === hoy.getFullYear();
+              break;
+
+            case 'anual':
+              dentroPeriodo = fecha.getFullYear() === hoy.getFullYear();
+              break;
+          }
+
+          if (dentroPeriodo) {
+            const montoNum = Number(d.monto);
+            if (!isNaN(montoNum)) {
+              if (d.tipo && d.tipo.toLowerCase() === "ingreso") ingresos += montoNum;
+              else gastos += montoNum;
+            }
+          }
+
+          cursor.continue();
+        } else {
+          const saldo = ingresos - gastos;
+          document.getElementById("reporte").innerHTML = `
+            <h3>Reporte ${periodo.charAt(0).toUpperCase() + periodo.slice(1)}</h3>
+            <p><strong>Ingresos:</strong> Bs ${ingresos.toFixed(2)}</p>
+            <p><strong>Gastos:</strong> Bs ${gastos.toFixed(2)}</p>
+            <p><strong>Saldo:</strong> Bs ${saldo.toFixed(2)}</p>
+          `;
         }
-
-        case 'mensual':
-          dentroPeriodo = fecha.getMonth() === hoy.getMonth() &&
-                          fecha.getFullYear() === hoy.getFullYear();
-          break;
-
-        case 'anual':
-          dentroPeriodo = fecha.getFullYear() === hoy.getFullYear();
-          break;
-      }
-
-if (dentroPeriodo) {
-  const montoNum = Number(d.monto);
-  if (!isNaN(montoNum)) {
-    if (d.tipo && d.tipo.toLowerCase() === "ingreso") ingresos += montoNum;
-    else gastos += montoNum;
-  }
-}
-
-
-      cursor.continue();
-    } else {
-      const saldo = ingresos - gastos;
-      document.getElementById("reporte").innerHTML = `
-        <h3>Reporte ${periodo.charAt(0).toUpperCase() + periodo.slice(1)}</h3>
-        <p><strong>Ingresos:</strong> Bs ${ingresos.toFixed(2)}</p>
-        <p><strong>Gastos:</strong> Bs ${gastos.toFixed(2)}</p>
-        <p><strong>Saldo:</strong> Bs ${saldo.toFixed(2)}</p>
-      `;
+      };
     }
-  };
-}
-
-
     
     function mostrarGestor() {
       const lista = document.getElementById("lista");
