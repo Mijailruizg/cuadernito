@@ -158,7 +158,16 @@
     .manual-selector select option {
       padding: 8px;
     }
-  </style>
+</style>
+<!-- Cambia la forma de cargar las bibliotecas -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+<script>
+  // Espera a que todo esté cargado
+  document.addEventListener('DOMContentLoaded', function() {
+    window.jsPDF = window.jspdf.jsPDF;
+  });
+</script>
 </head>
 <body>
 
@@ -224,7 +233,13 @@
     </div>
 
     <button onclick="mostrarGestor()">Gestor</button>
+  
+  
+<button onclick="exportarGestorAPdf()">Exportar a PDF</button>
 
+
+
+    
     <div class="manual-selector">
       <label for="manuales">Seleccionar Manual:</label>
       <select id="manuales" onchange="abrirManual()">
@@ -412,6 +427,111 @@
 
       document.getElementById("gestor").classList.toggle("hidden");
     }
+      
+
+async function exportarGestorAPdf() {
+  try {
+    // Verificar si jsPDF está disponible
+    if (typeof jsPDF === 'undefined') {
+      alert('Error: La biblioteca jsPDF no está cargada correctamente. Recargue la página.');
+      return;
+    }
+
+    // Crear una instancia de jsPDF
+    const doc = new jsPDF();
+    
+    // Mostrar mensaje de "Generando PDF..."
+    alert('Generando PDF... Por favor espere.');
+
+    // Obtener los datos de IndexedDB
+    const movimientos = await new Promise((resolve, reject) => {
+      const tx = db.transaction(["movimientos"], "readonly");
+      const store = tx.objectStore("movimientos");
+      const request = store.getAll();
+
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(new Error('Error al obtener datos de la base de datos'));
+    });
+
+    // Configuración del documento
+    doc.setFontSize(16);
+    doc.setTextColor(0, 77, 64);
+    doc.text('Reporte de Movimientos - Cuadernito Digital', 105, 15, { align: 'center' });
+    
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    
+    // Encabezados de columna
+    doc.setFont(undefined, 'bold');
+    doc.text('Fecha', 20, 30);
+    doc.text('Tipo', 50, 30);
+    doc.text('Categoría', 80, 30);
+    doc.text('Producto', 110, 30);
+    doc.text('Monto (Bs)', 170, 30, { align: 'right' });
+    
+    doc.setFont(undefined, 'normal');
+    
+    let y = 40;
+    let totalIngresos = 0;
+    let totalGastos = 0;
+
+    if (movimientos.length === 0) {
+      doc.text('No hay movimientos registrados', 20, y);
+    } else {
+      movimientos.forEach((mov) => {
+        if (y > 270) {
+          doc.addPage();
+          y = 20;
+        }
+        
+        // Validar y formatear los datos
+        const fecha = mov.fecha || 'Sin fecha';
+        const tipo = mov.tipo ? mov.tipo.charAt(0).toUpperCase() + mov.tipo.slice(1) : 'Sin tipo';
+        const categoria = mov.categoria || 'Sin categoría';
+        const producto = mov.producto || 'Sin producto';
+        const monto = isNaN(mov.monto) ? 0 : parseFloat(mov.monto);
+        
+        doc.text(fecha, 20, y);
+        doc.text(tipo, 50, y);
+        doc.text(categoria, 80, y);
+        doc.text(producto, 110, y);
+        doc.text(monto.toFixed(2), 170, y, { align: 'right' });
+        
+        if (mov.tipo && mov.tipo.toLowerCase() === 'ingreso') {
+          totalIngresos += monto;
+        } else {
+          totalGastos += monto;
+        }
+        
+        y += 10;
+      });
+
+      // Totales
+      y += 10;
+      doc.setFont(undefined, 'bold');
+      doc.text('TOTAL INGRESOS:', 130, y, { align: 'right' });
+      doc.text(totalIngresos.toFixed(2) + ' Bs', 170, y, { align: 'right' });
+      y += 10;
+      doc.text('TOTAL GASTOS:', 130, y, { align: 'right' });
+      doc.text(totalGastos.toFixed(2) + ' Bs', 170, y, { align: 'right' });
+      y += 10;
+      doc.text('SALDO FINAL:', 130, y, { align: 'right' });
+      doc.text((totalIngresos - totalGastos).toFixed(2) + ' Bs', 170, y, { align: 'right' });
+    }
+    
+    // Pie de página
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text('Generado el ' + new Date().toLocaleDateString(), 105, 285, { align: 'center' });
+    
+    // Guardar el PDF
+    doc.save('reporte_movimientos_' + new Date().toISOString().slice(0, 10) + '.pdf');
+    
+  } catch (error) {
+    console.error('Error al generar PDF:', error);
+    alert('Ocurrió un error al generar el PDF: ' + error.message);
+  }
+}
   </script>
 
 </body>
