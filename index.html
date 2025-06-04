@@ -245,9 +245,9 @@
   </div>
 
 <div id="cuadernito" class="container">
+  <h1 style="margin: 0;">Cuadernito Digital</h1>
   <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px;">
-   <img src="https://unifranz.edu.bo/wp-content/themes/unifranz/dist/images/logo_583717f4.png" alt="Logo" style="height: 55px; width: 50px; object-fit: contain; border-radius: 8px;">
-    <h1 style="margin: 0;">Cuadernito Digital</h1>
+   <img src="https://unifranz.edu.bo/wp-content/themes/unifranz/dist/images/logo_583717f4.png" alt="Logo" style="height: 58px; width: 58px; object-fit: contain; border-radius: 8px;">
   </div>
 
     
@@ -258,7 +258,7 @@
       <option value="gasto">Gasto</option>
     </select>
 
-    <label for="tipo">Seleccionar</label>
+    <label for="tipo">Tipo de Ingreso</label>
     <select id="categoria">
       <option value="">-- Selecciona --</option>
       <option value="Venta">Venta</option>
@@ -301,7 +301,7 @@
       <button onclick="mostrarReporte('anual')">Reporte Anual</button>
     </div>
 
-    <button onclick="mostrarGestor()">Gestor</button>
+    <button onclick="mostrarGestor()">Movimiento Detallado</button>
   
   
 <button onclick="exportarGestorAPdf()">Exportar a PDF</button>
@@ -320,7 +320,7 @@
 
     <div id="reporte"></div>
     <div id="gestor" class="hidden">
-      <h2>Gestor de Movimientos</h2>
+      <h2>Movimiento Detallado</h2>
       <ul id="lista"></ul>
     </div>
   </div>
