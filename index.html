@@ -284,7 +284,10 @@
     </select>
 
 
-    <label for="monto">Monto (Bs):</label>
+<label for="cantidad">Cantidad Del Producto:</label>
+<input type="number" id="cantidad" placeholder="Cantidad" min="1" step="1">
+
+    <label for="monto">Precio Del Producto (Bs):</label>
     <input type="number" id="monto" placeholder="Monto (Bs)">
 
 
@@ -386,26 +389,47 @@
     };
 
     function registrarMovimiento() {
-      const montoRaw = document.getElementById("monto").value.trim();
-      const monto = parseFloat(montoRaw);
       const tipo = document.getElementById("tipo").value;
       const categoria = document.getElementById("categoria").value;
+      const rubro = document.getElementById("rubro").value;
       const producto = document.getElementById("producto").value;
+      const cantidad = Number(document.getElementById("cantidad").value);
+      const monto = Number(document.getElementById("monto").value);
       const fecha = document.getElementById("fecha").value;
 
-      if (montoRaw === "" || isNaN(monto) || !fecha || !producto || !db) {
-        alert("Complete todos los campos correctamente y asegúrese de ingresar un monto válido.");
+      if (!tipo || !categoria || !rubro || !producto || isNaN(cantidad) || isNaN(monto) || !fecha) {
+        alert("Por favor, completa todos los campos correctamente.");
         return;
       }
 
+      const movimiento = {
+        tipo: tipo.toLowerCase(),
+        categoria,
+        rubro,
+        producto,
+        cantidad,
+        monto: (monto * cantidad).toFixed(2),
+        fecha
+      };
+
       const tx = db.transaction(["movimientos"], "readwrite");
       const store = tx.objectStore("movimientos");
-      store.add({ monto, tipo, categoria, producto, fecha });
+      store.add(movimiento);
 
-      tx.oncomplete = () => {
-        alert("Movimiento registrado");
+      tx.oncomplete = function () {
+        alert("Movimiento registrado exitosamente.");
+        document.getElementById("tipo").value = "";
+        document.getElementById("categoria").value = "";
+        document.getElementById("rubro").value = "";
+        document.getElementById("producto").value = "";
+        document.getElementById("cantidad").value = "";
         document.getElementById("monto").value = "";
-        document.getElementById("producto").selectedIndex = 0;
+        document.getElementById("fecha").value = hoy;
+      };
+
+      tx.onerror = function (event) {
+        console.error("Error al registrar movimiento", event);
+        alert("Ocurrió un error al registrar el movimiento.");
       };
     }
 
