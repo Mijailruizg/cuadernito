@@ -708,28 +708,42 @@ function eliminarRubro() {
 }
 
 // Añadir nuevo producto a un rubro
+// Añadir nuevo producto a un rubro
 function agregarProducto() {
   const rubro = document.getElementById('rubroProducto').value;
-  const nuevoProducto = document.getElementById('nuevoProducto').value.trim();
-  
-  if (rubro && nuevoProducto) {
-    if (!productosPorRubro[rubro].includes(nuevoProducto)) {
-      productosPorRubro[rubro].push(nuevoProducto);
-      
-      // Si el rubro seleccionado en el formulario principal es el mismo, actualizar productos
-      if (document.getElementById('rubro').value === rubro) {
-        actualizarProductos();
-      }
-      
-      // Limpiar campos
-      document.getElementById('nuevoProducto').value = '';
-      alert('Producto añadido con éxito');
-    } else {
-      alert('Este producto ya existe en el rubro seleccionado');
-    }
-  } else {
+  let nuevoProducto = document.getElementById('nuevoProducto').value.trim();
+
+  if (!rubro || !nuevoProducto) {
     alert('Selecciona un rubro y escribe un nombre de producto');
+    return;
   }
+
+  // Formatear: Primera palabra con mayúscula, el resto minúsculas
+  nuevoProducto = nuevoProducto
+    .toLowerCase()
+    .replace(/\b\w/g, l => l.toUpperCase());
+
+  const productos = productosPorRubro[rubro] || [];
+
+  // Verificar si ya existe (comparación insensible a mayúsculas/minúsculas)
+  const yaExiste = productos.some(
+    p => p.toLowerCase() === nuevoProducto.toLowerCase()
+  );
+
+  if (yaExiste) {
+    alert('Este producto ya existe en el rubro seleccionado');
+    return;
+  }
+
+  productosPorRubro[rubro].push(nuevoProducto);
+
+  // Si el rubro seleccionado en el formulario principal es el mismo, actualizar productos
+  if (document.getElementById('rubro').value === rubro) {
+    actualizarProductos();
+  }
+
+  document.getElementById('nuevoProducto').value = '';
+  alert('Producto añadido con éxito');
 }
 
 
