@@ -55,6 +55,37 @@
     select:hover, input[type="number"]:hover, input[type="date"]:hover {
       border-color: #004d40;
     }
+    
+    /* Estilos específicos para el campo de fecha */
+    input[type="date"] {
+      cursor: pointer;
+      background-color: #f8f9fa;
+      position: relative;
+    }
+    
+    input[type="date"]:hover {
+      background-color: #e8f5e9;
+      border-color: #004d40;
+    }
+    
+    input[type="date"]:focus {
+      outline: none;
+      border-color: #00796b;
+      background-color: #e8f5e9;
+      box-shadow: 0 0 5px rgba(0, 121, 107, 0.3);
+    }
+    
+    /* Hacer que el ícono del calendario sea más visible */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      cursor: pointer;
+      opacity: 0.8;
+      transform: scale(1.2);
+    }
+    
+    input[type="date"]::-webkit-calendar-picker-indicator:hover {
+      opacity: 1;
+      transform: scale(1.3);
+    }
     .row {
       display: flex;
       justify-content: space-between;
@@ -270,12 +301,7 @@
     <label for="rubro">Seleccionar rubro:</label>
     <select id="rubro" onchange="actualizarProductos()">
       <option value="">-- Selecciona un rubro --</option>
-      <option value="Textiles y Confección">Textiles y Confección</option>
-      <option value="Alimentación y Bebidas">Alimentación y Bebidas</option>
-      <option value="Cosméticos y Cuidado Personal">Cosméticos y Cuidado Personal</option>
-      <option value="Accesorios y Bijutería">Accesorios y Bijutería</option>
-      <option value="Servicios y Consultoría">Servicios y Consultoría</option>
-      <option value="Productos Personalizados y Artesanías">Productos Personalizados y Artesanías</option>
+      <!-- Opciones de rubro se llenan dinámicamente -->
     </select>
 
     <label for="producto">Seleccionar producto:</label>
@@ -292,6 +318,7 @@
 
 
 
+    <label for="fecha">Fecha del Movimiento (Haz clic en cualquier parte del campo):</label>
     <input type="date" id="fecha">
     <button onclick="registrarMovimiento()">Registrar</button>
 
@@ -331,7 +358,8 @@
   <script>
     let db;
 
-    const productosPorRubro = {
+    // Cargar productosPorRubro desde localStorage o usar los valores por defecto
+    let productosPorRubro = JSON.parse(localStorage.getItem('productosPorRubro')) || {
       "Textiles y Confección": ["Toallas ecológicas", "Toallas de baño", "Toallas de mano", "Tejidos a crochet", "Fundas de tazas", "Monederos de crochet", "Ganchos para cabello tejidos", "Bolsos y mochilas de tela reutilizable", "Pijamas de seda", "Camisetas de algodón personalizadas"],
       "Alimentación y Bebidas": ["Licor de achachairu", "Dulce de café", "Escabeche de berenjena", "Cuñape (pan de queso)", "Queques (pasteles tradicionales)", "Empanadas", "Café molido", "Café en grano", "Sultana", "Jugos naturales de frutas"],
       "Cosméticos y Cuidado Personal": ["Jabones artesanales", "Bálsamos labiales naturales", "Fortalecedor de pestañas", "Crema hidratante natural", "Aceite esencial de lavanda", "Exfoliante corporal de azúcar y aceite", "Perfumes artesanales", "Velas aromáticas naturales", "Shampoo sólido", "Mascarillas faciales naturales"],
@@ -357,36 +385,134 @@
     function abrirManual() {
       const manualSeleccionado = document.getElementById("manuales").value;
       if (manualSeleccionado) {
-        window.open(manualSeleccionado, '_blank');
-        document.getElementById("manuales").selectedIndex = 0;
+        window.location.href = manualSeleccionado;
       }
     }
 
-    window.onload = function () {
-      const request = indexedDB.open("CuadernitoDB", 1);
-      const hoy = new Date().toISOString().split("T")[0];
-      document.getElementById("fecha").value = hoy;
+window.onload = function () {
+  const request = indexedDB.open("CuadernitoDB", 1);
+  const hoy = new Date().toISOString().split("T")[0];
 
-      request.onerror = function (event) {
-        console.error("Error al abrir IndexedDB", event);
-      };
+  // Configurar el campo de fecha
+  const fechaInput = document.getElementById("fecha");
+  fechaInput.value = hoy;
+  fechaInput.max = hoy;
 
-      request.onsuccess = function (event) {
-        db = event.target.result;
-        console.log("Base de datos abierta");
-      };
+  // Solo permitir números enteros en el campo cantidad
+  const cantidadInput = document.getElementById('cantidad');
+  cantidadInput.addEventListener('input', function (e) {
+    // Eliminar todo lo que no sea dígito
+    this.value = this.value.replace(/[^0-9]/g, '');
+  });
 
-      request.onupgradeneeded = function (event) {
-        db = event.target.result;
-        db.createObjectStore("movimientos", { keyPath: "id", autoIncrement: true });
-        console.log("Base de datos creada");
-      };
+  // Solo permitir números decimales válidos en el campo monto (punto o coma, solo uno, no al inicio, sin fracciones ni %)
+  const montoInput = document.getElementById('monto');
+  montoInput.addEventListener('beforeinput', function (e) {
+    // Permitir navegación, borrar, etc.
+    if (e.inputType && ["deleteContentBackward", "deleteContentForward", "deleteByCut", "insertFromPaste"].includes(e.inputType)) return;
+    let nextValue = this.value;
+    const selectionStart = this.selectionStart;
+    const selectionEnd = this.selectionEnd;
+    // Simular el valor después de la entrada
+    if (typeof e.data === 'string') {
+      nextValue = nextValue.slice(0, selectionStart) + e.data + nextValue.slice(selectionEnd);
+    }
+    // Reemplazar coma por punto
+    nextValue = nextValue.replace(/,/g, '.');
+    // Eliminar fracciones y porcentajes
+    if (/[/%]/.test(e.data)) {
+      e.preventDefault();
+      return;
+    }
+    // Solo permitir un punto decimal y no al inicio
+    if (e.data === '.' || e.data === ',') {
+      if (selectionStart === 0) {
+        e.preventDefault();
+        return;
+      }
+      if (this.value.includes('.') && selectionStart !== this.value.indexOf('.')) {
+        e.preventDefault();
+        return;
+      }
+    }
+    // Solo permitir dígitos y un punto
+    if (!/^[0-9.]*$/.test(nextValue)) {
+      e.preventDefault();
+      return;
+    }
+    // Solo un punto decimal
+    if ((nextValue.match(/\./g) || []).length > 1) {
+      e.preventDefault();
+      return;
+    }
+  });
+  // Normalizar el valor final al salir del input
+  montoInput.addEventListener('change', function () {
+    let val = this.value.replace(/,/g, '.');
+    val = val.replace(/[/%]/g, '');
+    val = val.replace(/[^0-9.]/g, '');
+    const parts = val.split('.');
+    if (parts.length > 2) {
+      val = parts[0] + '.' + parts.slice(1).join('');
+    }
+    if (val.startsWith('.')) val = '0' + val;
+    this.value = val;
+  });
 
-      document.getElementById("btn-inicio").addEventListener("click", () => {
-        document.getElementById("pantalla-inicio").style.display = "none";
-        document.getElementById("cuadernito").style.display = "block";
-      });
-    };
+  // Hacer que todo el campo sea clickeable
+  fechaInput.addEventListener('click', function() {
+    this.showPicker ? this.showPicker() : this.focus();
+  });
+
+  // Agregar evento para hacer clic en cualquier parte del campo
+  fechaInput.addEventListener('mousedown', function(e) {
+    e.preventDefault();
+    this.focus();
+    this.click();
+  });
+
+  // --- ACTUALIZAR SELECTORES DE RUBROS Y PRODUCTOS AL CARGAR LA PÁGINA ---
+  actualizarSelectorPrincipalRubros();
+  actualizarSelectoresRubros();
+  actualizarProductos();
+
+  request.onerror = function (event) {
+    console.error("Error al abrir IndexedDB", event);
+  };
+
+  request.onsuccess = function (event) {
+    db = event.target.result;
+    console.log("Base de datos abierta");
+  };
+
+  request.onupgradeneeded = function (event) {
+    db = event.target.result;
+    db.createObjectStore("movimientos", { keyPath: "id", autoIncrement: true });
+    console.log("Base de datos creada");
+  };
+
+  document.getElementById("btn-inicio").addEventListener("click", () => {
+    document.getElementById("pantalla-inicio").style.display = "none";
+    document.getElementById("cuadernito").style.display = "block";
+  });
+};
+
+// Llenar el selector principal de rubros desde productosPorRubro
+function actualizarSelectorPrincipalRubros() {
+  const rubroSelect = document.getElementById('rubro');
+  const valorActual = rubroSelect.value;
+  rubroSelect.innerHTML = '<option value="">-- Selecciona un rubro --</option>';
+  for (const rubro in productosPorRubro) {
+    const option = document.createElement('option');
+    option.value = rubro;
+    option.textContent = rubro;
+    rubroSelect.appendChild(option);
+  }
+  // Restaurar selección si es posible
+  if (valorActual && productosPorRubro[valorActual]) {
+    rubroSelect.value = valorActual;
+  }
+}
 
     function registrarMovimiento() {
       const tipo = document.getElementById("tipo").value;
@@ -397,8 +523,8 @@
       const monto = Number(document.getElementById("monto").value);
       const fecha = document.getElementById("fecha").value;
 
-      if (!tipo || !categoria || !rubro || !producto || isNaN(cantidad) || isNaN(monto) || !fecha) {
-        alert("Por favor, completa todos los campos correctamente.");
+      if (!tipo || !categoria || !rubro || !producto || isNaN(cantidad) || isNaN(monto) || cantidad <= 0 || monto <= 0 || !fecha) {
+        alert("Por favor, completa todos los campos correctamente. La cantidad y el monto deben ser mayores a 0.");
         return;
       }
 
@@ -424,7 +550,6 @@
         document.getElementById("producto").value = "";
         document.getElementById("cantidad").value = "";
         document.getElementById("monto").value = "";
-        document.getElementById("fecha").value = hoy;
       };
 
       tx.onerror = function (event) {
@@ -662,24 +787,48 @@ function actualizarSelectoresRubros() {
   }
 }
 
+// Función para quitar tildes y normalizar texto
+function normalizarTexto(texto) {
+  return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+}
+
+// Función para capitalizar correctamente los nombres de rubros y productos
+function capitalizarNombre(nombre) {
+  const conectores = ['y', 'e', 'de', 'del', 'la', 'el', 'los', 'las', 'para', 'en', 'con', 'a', 'por', 'o', 'u'];
+  return nombre
+    .toLowerCase()
+    .split(' ')
+    .map((palabra, i) => {
+      if (conectores.includes(palabra) && i !== 0) {
+        return palabra;
+      }
+      return palabra.charAt(0).toUpperCase() + palabra.slice(1);
+    })
+    .join(' ');
+}
+
 // Añadir nuevo rubro
 function agregarRubro() {
-  const nuevoRubro = document.getElementById('nuevoRubro').value.trim();
-  if (nuevoRubro && !productosPorRubro[nuevoRubro]) {
+  let nuevoRubro = document.getElementById('nuevoRubro').value.trim();
+  nuevoRubro = capitalizarNombre(nuevoRubro);
+  // Normalizar el nuevo rubro para comparar sin tildes ni mayúsculas
+  const nuevoRubroNorm = normalizarTexto(nuevoRubro);
+  let existe = false;
+  for (const rubro in productosPorRubro) {
+    if (normalizarTexto(rubro) === nuevoRubroNorm) {
+      existe = true;
+      break;
+    }
+  }
+  if (nuevoRubro && !existe) {
     productosPorRubro[nuevoRubro] = [];
-    
-    // Actualizar el selector principal
-    const rubroSelect = document.getElementById('rubro');
-    const option = document.createElement('option');
-    option.value = nuevoRubro;
-    option.textContent = nuevoRubro;
-    rubroSelect.appendChild(option);
-    
+    // Guardar en localStorage
+    localStorage.setItem('productosPorRubro', JSON.stringify(productosPorRubro));
+    // Actualizar el selector principal y los del menú
+    actualizarSelectorPrincipalRubros();
+    actualizarSelectoresRubros();
     // Limpiar campo
     document.getElementById('nuevoRubro').value = '';
-    
-    // Actualizar selectores en el menú
-    actualizarSelectoresRubros();
     alert('Rubro añadido con éxito');
   } else {
     alert('El rubro ya existe o el nombre está vacío');
@@ -691,61 +840,48 @@ function eliminarRubro() {
   const rubroAEliminar = document.getElementById('rubroAEliminar').value;
   if (rubroAEliminar && confirm(`¿Estás seguro de eliminar el rubro "${rubroAEliminar}"?`)) {
     delete productosPorRubro[rubroAEliminar];
-    
-    // Actualizar el selector principal
-    const rubroSelect = document.getElementById('rubro');
-    for (let i = 0; i < rubroSelect.options.length; i++) {
-      if (rubroSelect.options[i].value === rubroAEliminar) {
-        rubroSelect.remove(i);
-        break;
-      }
-    }
-    
-    // Actualizar selectores en el menú
+    // Guardar en localStorage
+    localStorage.setItem('productosPorRubro', JSON.stringify(productosPorRubro));
+    // Actualizar el selector principal y los del menú
+    actualizarSelectorPrincipalRubros();
     actualizarSelectoresRubros();
     alert('Rubro eliminado con éxito');
   }
 }
 
-// Añadir nuevo producto a un rubro
+
 // Añadir nuevo producto a un rubro
 function agregarProducto() {
   const rubro = document.getElementById('rubroProducto').value;
   let nuevoProducto = document.getElementById('nuevoProducto').value.trim();
-
-  if (!rubro || !nuevoProducto) {
+  nuevoProducto = capitalizarNombre(nuevoProducto);
+  const nuevoProductoNorm = normalizarTexto(nuevoProducto);
+  let existe = false;
+  if (rubro && nuevoProducto) {
+    for (const prod of productosPorRubro[rubro]) {  
+      if (normalizarTexto(prod) === nuevoProductoNorm) {
+        existe = true;
+        break;
+      }
+    }
+    if (!existe) {
+      productosPorRubro[rubro].push(nuevoProducto);
+      // Guardar en localStorage
+      localStorage.setItem('productosPorRubro', JSON.stringify(productosPorRubro));
+      // Si el rubro seleccionado en el formulario principal es el mismo, actualizar productos
+      if (document.getElementById('rubro').value === rubro) {
+        actualizarProductos();
+      }
+      // Limpiar campos
+      document.getElementById('nuevoProducto').value = '';
+      alert('Producto añadido con éxito');
+    } else {
+      alert('Este producto ya existe en el rubro seleccionado');
+    }
+  } else {
     alert('Selecciona un rubro y escribe un nombre de producto');
-    return;
   }
-
-  // Formatear: Primera palabra con mayúscula, el resto minúsculas
-  nuevoProducto = nuevoProducto
-    .toLowerCase()
-    .replace(/\b\w/g, l => l.toUpperCase());
-
-  const productos = productosPorRubro[rubro] || [];
-
-  // Verificar si ya existe (comparación insensible a mayúsculas/minúsculas)
-  const yaExiste = productos.some(
-    p => p.toLowerCase() === nuevoProducto.toLowerCase()
-  );
-
-  if (yaExiste) {
-    alert('Este producto ya existe en el rubro seleccionado');
-    return;
-  }
-
-  productosPorRubro[rubro].push(nuevoProducto);
-
-  // Si el rubro seleccionado en el formulario principal es el mismo, actualizar productos
-  if (document.getElementById('rubro').value === rubro) {
-    actualizarProductos();
-  }
-
-  document.getElementById('nuevoProducto').value = '';
-  alert('Producto añadido con éxito');
 }
-
 
   </script>
 
