@@ -674,9 +674,9 @@ async function exportarGestorAPdf() {
       return;
     }
 
-    // Crear una instancia de jsPDF
-    const doc = new jsPDF();
-    
+    // Crear una instancia de jsPDF en orientación horizontal (landscape)
+    const doc = new jsPDF({ orientation: 'landscape' });
+
     // Mostrar mensaje de "Generando PDF..."
     alert('Generando PDF... Por favor espere.');
 
@@ -693,21 +693,21 @@ async function exportarGestorAPdf() {
     // Configuración del documento
     doc.setFontSize(16);
     doc.setTextColor(0, 77, 64);
-    doc.text('Reporte de Movimientos - Cuadernito Digital', 105, 15, { align: 'center' });
-    
+    doc.text('Reporte de Movimientos - Cuadernito Digital', 148, 15, { align: 'center' }); // 148 es el centro de una hoja A4 horizontal
+
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
-    
+
     // Encabezados de columna
     doc.setFont(undefined, 'bold');
     doc.text('Fecha', 20, 30);
-    doc.text('Tipo', 50, 30);
-    doc.text('Categoría', 80, 30);
-    doc.text('Producto', 110, 30);
-    doc.text('Monto (Bs)', 170, 30, { align: 'right' });
-    
+    doc.text('Tipo', 60, 30);
+    doc.text('Categoría', 100, 30);
+    doc.text('Producto', 160, 30);
+    doc.text('Monto (Bs)', 260, 30, { align: 'right' });
+
     doc.setFont(undefined, 'normal');
-    
+
     let y = 40;
     let totalIngresos = 0;
     let totalGastos = 0;
@@ -716,54 +716,54 @@ async function exportarGestorAPdf() {
       doc.text('No hay movimientos registrados', 20, y);
     } else {
       movimientos.forEach((mov) => {
-        if (y > 270) {
+        if (y > 190) { // Menor altura por ser horizontal
           doc.addPage();
           y = 20;
         }
-        
+
         // Validar y formatear los datos
         const fecha = mov.fecha || 'Sin fecha';
         const tipo = mov.tipo ? mov.tipo.charAt(0).toUpperCase() + mov.tipo.slice(1) : 'Sin tipo';
         const categoria = mov.categoria || 'Sin categoría';
         const producto = mov.producto || 'Sin producto';
         const monto = isNaN(mov.monto) ? 0 : parseFloat(mov.monto);
-        
+
         doc.text(fecha, 20, y);
-        doc.text(tipo, 50, y);
-        doc.text(categoria, 80, y);
-        doc.text(producto, 110, y);
-        doc.text(monto.toFixed(2), 170, y, { align: 'right' });
-        
+        doc.text(tipo, 60, y);
+        doc.text(categoria, 100, y);
+        doc.text(producto, 160, y);
+        doc.text(monto.toFixed(2), 260, y, { align: 'right' });
+
         if (mov.tipo && mov.tipo.toLowerCase() === 'ingreso') {
           totalIngresos += monto;
         } else {
           totalGastos += monto;
         }
-        
+
         y += 10;
       });
 
       // Totales
       y += 10;
       doc.setFont(undefined, 'bold');
-      doc.text('TOTAL INGRESOS:', 130, y, { align: 'right' });
-      doc.text(totalIngresos.toFixed(2) + ' Bs', 170, y, { align: 'right' });
+      doc.text('TOTAL INGRESOS:', 200, y, { align: 'right' });
+      doc.text(totalIngresos.toFixed(2) + ' Bs', 260, y, { align: 'right' });
       y += 10;
-      doc.text('TOTAL GASTOS:', 130, y, { align: 'right' });
-      doc.text(totalGastos.toFixed(2) + ' Bs', 170, y, { align: 'right' });
+      doc.text('TOTAL GASTOS:', 200, y, { align: 'right' });
+      doc.text(totalGastos.toFixed(2) + ' Bs', 260, y, { align: 'right' });
       y += 10;
-      doc.text('SALDO FINAL:', 130, y, { align: 'right' });
-      doc.text((totalIngresos - totalGastos).toFixed(2) + ' Bs', 170, y, { align: 'right' });
+      doc.text('SALDO FINAL:', 200, y, { align: 'right' });
+      doc.text((totalIngresos - totalGastos).toFixed(2) + ' Bs', 260, y, { align: 'right' });
     }
-    
+
     // Pie de página
     doc.setFontSize(10);
     doc.setTextColor(100);
-    doc.text('Generado el ' + new Date().toLocaleDateString(), 105, 285, { align: 'center' });
-    
+    doc.text('Generado el ' + new Date().toLocaleDateString(), 148, 200, { align: 'center' });
+
     // Guardar el PDF
     doc.save('reporte_movimientos_' + new Date().toISOString().slice(0, 10) + '.pdf');
-    
+
   } catch (error) {
     console.error('Error al generar PDF:', error);
     alert('Ocurrió un error al generar el PDF: ' + error.message);
