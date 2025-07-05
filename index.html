@@ -422,7 +422,7 @@ window.onload = function () {
     this.value = this.value.replace(/[^0-9]/g, '');
   });
 
-  // Solo permitir números decimales válidos en el campo monto (punto o coma, solo uno, no al inicio, sin fracciones ni %)
+  // Solo permitir números decimales válidos en el campo monto (solo punto, no coma)
   const montoInput = document.getElementById('monto');
   montoInput.addEventListener('beforeinput', function (e) {
     // Permitir navegación, borrar, etc.
@@ -432,40 +432,27 @@ window.onload = function () {
     const selectionEnd = this.selectionEnd;
     // Simular el valor después de la entrada
     if (typeof e.data === 'string') {
+      // Bloquear la coma
+      if (e.data === ',') {
+        e.preventDefault();
+        return;
+      }
       nextValue = nextValue.slice(0, selectionStart) + e.data + nextValue.slice(selectionEnd);
-    }
-    // Reemplazar coma por punto
-    nextValue = nextValue.replace(/,/g, '.');
-    // Eliminar fracciones y porcentajes
-    if (/[/%]/.test(e.data)) {
-      e.preventDefault();
-      return;
-    }
-    // Solo permitir un punto decimal y no al inicio
-    if (e.data === '.' || e.data === ',') {
-      if (selectionStart === 0) {
-        e.preventDefault();
-        return;
-      }
-      if (this.value.includes('.') && selectionStart !== this.value.indexOf('.')) {
-        e.preventDefault();
-        return;
-      }
     }
     // Solo permitir dígitos y un punto
     if (!/^[0-9.]*$/.test(nextValue)) {
       e.preventDefault();
       return;
     }
-    // Solo un punto decimal
-    if ((nextValue.match(/\./g) || []).length > 1) {
+    // Solo un punto decimal y no al inicio
+    if ((nextValue.match(/\./g) || []).length > 1 || (e.data === '.' && selectionStart === 0)) {
       e.preventDefault();
       return;
     }
   });
   // Normalizar el valor final al salir del input
   montoInput.addEventListener('change', function () {
-    let val = this.value.replace(/,/g, '.');
+    let val = this.value.replace(/,/g, ''); // Elimina cualquier coma que haya quedado
     val = val.replace(/[/%]/g, '');
     val = val.replace(/[^0-9.]/g, '');
     const parts = val.split('.');
